@@ -1,5 +1,11 @@
 package cn.tedu.util;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class WebUtils {
 	/**
 	 * 用来验证字符串是否为null或空串的方法

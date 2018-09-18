@@ -83,7 +83,15 @@
 		  $(function(){
 		    //文档就绪事件，当当前文档加载完成后，会自动调用
 		    $("input[name='username']").blur(function(){
-		       formObj.checkNull("username","用户名不能为空");
+		       //验证用户是否为空
+		       var  flag = formObj.checkNull("username","用户名不能为空");
+		       //发送ajxa请求
+		       if(flag){//说明username不为空
+		          var url = "/AjaxCheckUsernameServlet?username="+$(this).val();
+		          //load方法时通过一个组件来调用
+		          //当ajax请求收到一个应答后，会将收到的应答内容自动填充到该组件内
+		          $("#msg_username").load(url);
+		       }
 		    });
 		     $("input[name='password']").blur(function(){
 		       formObj.checkNull("password","密码不能为空");
@@ -129,7 +137,7 @@
 					<td class="tds">用户名：</td>
 					<td>
 						<input type="text" name="username" value="<%=request.getParameter("username") == null ? "" : request.getParameter("username")%>"/>
-						<span></span>
+						<span id="msg_username"></span>
 					</td>
 				</tr>
 				<tr>
