@@ -6,11 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import cn.tedu.util.VerifyCode;
-
-public class ValiImageServlet extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
 
 	/**
 	 * The doGet method of the servlet. <br>
@@ -24,20 +21,11 @@ public class ValiImageServlet extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		//1.接收请求
-		//2.调用工具类，生成验证码图片
-		VerifyCode vc = new VerifyCode(); 
-		//3.将生成的验证码图片存入response实体中
-		vc.drawImage(resp.getOutputStream());
-		//4.控制浏览器不要缓存验证码图片
-		resp.setHeader("Pragma", "no-cache");
-		resp.setHeader("Cache-Control", "no-cache");
-		//将生成的验证码的文本内容输出到控制台
-		System.out.println(vc.getCode());
-		//获取用户的session对象
-		HttpSession session = req.getSession();
-		session.setAttribute("code", vc.getCode());
-
+		//执行注销
+		//销毁用户绑定的session
+		req.getSession().invalidate();
+		//请求重定向到首页
+		resp.sendRedirect(req.getContextPath()+"/index.jsp");
 	}
 
 	/**

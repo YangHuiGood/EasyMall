@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import cn.tedu.util.JDBCUtils;
 import cn.tedu.util.WebUtils;
@@ -40,7 +41,36 @@ public class RegistServlet extends HttpServlet {
 		String nickname = req.getParameter("nickname");
 		String email = req.getParameter("email");
 		String valistr = req.getParameter("valistr");
-	    //3.表单验证
+	    //表单验证
+		//验证码验证
+		if(WebUtils.isEmpty(valistr)){
+			//向request作用域中添加错误提示信息
+			req.setAttribute("errMsg", "验证码不能为空！");
+			//将请求转发给regist.jsp
+			req.getRequestDispatcher("/regist.jsp").forward(req, resp);
+			return;
+		}else{
+			//获取保存在session中的验证码
+			HttpSession session = req.getSession(false);
+			boolean flag = true;//默认验证码没问题
+			if(session == null || session.getAttribute("code") == null){
+				//没有session对象，或者session中没有正确的验证码文本
+				flag= false;
+			}else{
+				String text = (String) session.getAttribute("code");
+				if(!text.equalsIgnoreCase(valistr)){
+					//验证码不匹配
+					flag = false;
+				}
+			}
+			if(flag == false){
+				req.setAttribute("errMsg", "验证码错误");
+				//将请求转发给regist.jsp
+				req.getRequestDispatcher("/regist.jsp").forward(req, resp);
+				return;
+			}
+		}
+		
 		 //1)非空验证-不为null,qie trim()不为空串
 		if(WebUtils.isEmpty(username)){
 			//向request作用域中添加错误提示信息
@@ -70,13 +100,7 @@ public class RegistServlet extends HttpServlet {
 			req.getRequestDispatcher("/regist.jsp").forward(req, resp);
 			return;
 		}
-		if(WebUtils.isEmpty(valistr)){
-			//向request作用域中添加错误提示信息
-			req.setAttribute("errMsg", "验证码不能为空！");
-			//将请求转发给regist.jsp
-			req.getRequestDispatcher("/regist.jsp").forward(req, resp);
-			return;
-		}
+		
 		//2)密码一致验证
 		if(!password.equals(password2)){
 			//向request作用域中添加错误提示信息
@@ -126,7 +150,7 @@ public class RegistServlet extends HttpServlet {
 			JDBCUtils.close(conn, ps, rs);
 		}
 		
-		//5)验证码验证
+		
 		
 	//4.将数据存入数据库
 		String sql2 = "insert into user values(null,?,?,?,?)";
