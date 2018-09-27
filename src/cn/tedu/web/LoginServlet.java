@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import cn.tedu.domain.User;
+import cn.tedu.exception.MsgException;
+import cn.tedu.factory.BaseFactory;
+import cn.tedu.service.UserService;
+import cn.tedu.service.UserServiceImpl;
 import cn.tedu.util.JDBCUtils;
 
 public class LoginServlet extends HttpServlet {
@@ -64,31 +69,27 @@ public class LoginServlet extends HttpServlet {
 		//5.根据执行结果返回应答内容
 		//登录
 		//判断用户的用户名和密码是否正确
-		String sql = "select * from user where username = ? and password = ?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		
+		UserService service = BaseFactory.getFactory().getInstance(UserService.class);
+		User user = null;
 		try {
-			conn = JDBCUtils.getConnection();
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, username);
-			ps.setString(2, password);
-			rs = ps.executeQuery();
-			if(rs.next()){
-				req.getSession().setAttribute("user", username);
-				resp.sendRedirect(req.getContextPath()+"/index.jsp");
-				
-			}else{
-				req.setAttribute("errMsg", "用户名或密码错误");
-				//请求转发
-				req.getRequestDispatcher("/login.jsp").forward(req, resp);
-			}
-		} catch (SQLException e) {
+			user = service.login(username,password);
+		} catch (MsgException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new RuntimeException("登录出现异常"+e.getMessage());
-		}finally{
-			JDBCUtils.close(conn, ps, rs);
+			req.setAttribute("errMsg", e.getMessage());
+			//请求转发
+			req.getRequestDispatcher("/login.jsp").forward(req, resp);
+		}
+		if(user != null){
+			//直接添加用户对象在session中，供后续使用
+			req.getSession().setAttribute("user", user);
+			resp.sendRedirect(req.getContextPath()+"/index.jsp");
+			
+		}else{
+			req.setAttribute("errMsg", "用户名或密码错误");
+			//请求转发
+			req.getRequestDispatcher("/login.jsp").forward(req, resp);
 		}
 		
 		//将请求重定向到首页

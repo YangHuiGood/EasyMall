@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import= "java.net.URLDecoder" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -30,6 +31,7 @@
 	      //4.将用户名添加到username的input中
 	   
 	    %>
+	    <%--<c:if test="${cookie.remname.name}"></c:if>--%>
 	  
 	
 		<h1>欢迎登录EasyMall</h1>

@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import cn.tedu.domain.User;
+import cn.tedu.factory.BaseFactory;
+import cn.tedu.service.UserService;
+import cn.tedu.service.UserServiceImpl;
 import cn.tedu.util.JDBCUtils;
 import cn.tedu.util.WebUtils;
 
@@ -120,69 +124,40 @@ public class RegistServlet extends HttpServlet {
 		}
 		
 		//4)用户名是否存在验证
-		String sql1 = "select * from user where username=?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			conn = JDBCUtils.getConnection();
-			ps = conn.prepareStatement(sql1);
-			ps.setString(1, username);
-			rs = ps.executeQuery();
-			if(rs.next()){
-				//向request作用域中添加错误提示信息
-				req.setAttribute("errMsg", "用户名已存在！");
-				//将请求转发给regist.jsp
-				req.getRequestDispatcher("/regist.jsp").forward(req, resp);
-				return;
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		UserService service = BaseFactory.getFactory().getInstance(UserService.class);
+		boolean flag = service.hasUsername(username);
+		if (flag) {
+			// 向request作用域中添加错误提示信息
+			req.setAttribute("errMsg", "用户名已存在！");
+			// 将请求转发给regist.jsp
+			req.getRequestDispatcher("/regist.jsp").forward(req, resp);
+			return;
+		}
+		
+		
+		
+		
+		
+
+		
+		
+		
+	//4.将数据存入数据库
+		User user = new User(-1,username,password,nickname,email);
+		//调用service方法实现注册用户
+		boolean flag2 = service.registUser(user);
+		if(flag2){
+			//5.保存成功-提示成功信息，定时刷新到首页
+			resp.getWriter().write("<h1 style='text-align: center;color:red'>恭喜您，注册成功！3秒后跳转至首页</h1>");
+			resp.setHeader("refresh","3;url="+req.getContextPath()+"/index.jsp");
+		}else{
 			//向request作用域中添加错误提示信息
 			req.setAttribute("errMsg", "注册出现异常，请稍后重试....");
 			//将请求转发给regist.jsp
 			req.getRequestDispatcher("/regist.jsp").forward(req, resp);
 			return;
-			//开发时使用的便捷方案
-//			throw new RuntimeException("验证用户名时用户名出现异常"+e.getMessage());
-		}finally{
-			JDBCUtils.close(conn, ps, rs);
 		}
-		
-		
-		
-	//4.将数据存入数据库
-		String sql2 = "insert into user values(null,?,?,?,?)";
-		Connection conn2 = null;
-		PreparedStatement ps2 = null;
-		try {
-			conn2 = JDBCUtils.getConnection();
-			ps2 = conn2.prepareStatement(sql2);
-			ps2.setString(1, username);
-			ps2.setString(2, password);
-			ps2.setString(3, nickname);
-			ps2.setString(4, email);
-			int i = ps2.executeUpdate();
-			if(i > -1){
-				//5.保存成功-提示成功信息，定时刷新到首页
-				resp.getWriter().write("<h1 style='text-align: center;color:red'>恭喜您，注册成功！3秒后跳转至首页</h1>");
-				resp.setHeader("refresh","3;url="+req.getContextPath()+"/index.jsp");
-			}else{
-				//向request作用域中添加错误提示信息
-				req.setAttribute("errMsg", "注册出现异常，请稍后重试....");
-				//将请求转发给regist.jsp
-				req.getRequestDispatcher("/regist.jsp").forward(req, resp);
-				return;
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException("注册用户出现异常"+e.getMessage());	
-		}finally{
-			JDBCUtils.close(conn2, ps2, null);
-		}
-	//6.保存失败-提示失败信息，定时刷新到注册页面	
 
 	}
 

@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.tedu.factory.BaseFactory;
+import cn.tedu.service.UserService;
+import cn.tedu.service.UserServiceImpl;
 import cn.tedu.util.JDBCUtils;
 
 public class AjaxCheckUsernameServlet extends HttpServlet {
@@ -40,26 +43,13 @@ public class AjaxCheckUsernameServlet extends HttpServlet {
 		username = new String(array,encode);
 		
 		//查询数据库，看用户名是否存在
-		String sql = "select * from user where username = ?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		
-		try {
-			conn = JDBCUtils.getConnection();
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, username);
-			rs = ps.executeQuery();
-			if(rs.next()){
-				resp.getWriter().write("对不起！该用户名已存在！");
-			}else{
-				resp.getWriter().write("恭喜您！该用户名可使用！");
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
-			JDBCUtils.close(conn, ps, rs);
+		UserService service = BaseFactory.getFactory().getInstance(UserService.class);
+		boolean flag = service.hasUsername(username);
+		if(flag){
+			resp.getWriter().write("对不起！该用户名已存在！");
+		}else{
+			resp.getWriter().write("恭喜您！该用户名可使用！");
 		}
 
 	}

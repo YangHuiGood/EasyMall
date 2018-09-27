@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" buffer="0kb"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -8,10 +9,10 @@
 	</head>
 	<body>
 	<!-- jsp的脚本片段，允许在jsp中执行java代码 ，引入_head.jsp中的内容--->
-	<%
+	<%--<%
 	request.getRequestDispatcher("/_head.jsp").include(request, response);
-	 %>
-	
+	 %>--%>
+	<%@ include file="_head.jsp" %>
 		<div id="index">
 			<div id="line1">
 				<img src="img/index/banner_big.jpg"/>
@@ -49,8 +50,9 @@
 		</div>
 		
 		<!-- jsp的脚本片段，允许在jsp中执行java代码 ,引入_foot.jsp中的内容-->
-	<%
+	<%--<%
 	request.getRequestDispatcher("/_foot.jsp").include(request, response);
-	 %>
+	 --%>
+	 <%@ include file="_foot.jsp" %>
 	</body>
 </html>
