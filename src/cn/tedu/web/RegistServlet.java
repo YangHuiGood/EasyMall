@@ -17,6 +17,7 @@ import cn.tedu.factory.BaseFactory;
 import cn.tedu.service.UserService;
 import cn.tedu.service.UserServiceImpl;
 import cn.tedu.util.JDBCUtils;
+import cn.tedu.util.MD5Util;
 import cn.tedu.util.WebUtils;
 
 public class RegistServlet extends HttpServlet {
@@ -33,11 +34,11 @@ public class RegistServlet extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		//1.处理乱码问题
-		  //请求乱码
-		req.setCharacterEncoding("utf-8");
-		  //应答乱码
-		resp.setContentType("text/html;charset=utf-8");
+//		//1.处理乱码问题
+//		  //请求乱码
+//		req.setCharacterEncoding("utf-8");
+//		  //应答乱码
+//		resp.setContentType("text/html;charset=utf-8");
 		//2.接收表单数据
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
@@ -140,7 +141,8 @@ public class RegistServlet extends HttpServlet {
 		
 		
 
-		
+		//将密码进行MD5加密
+		password = MD5Util.md5(password);
 		
 		
 	//4.将数据存入数据库

@@ -3,6 +3,7 @@ package cn.tedu.web;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,12 @@ public class LogoutServlet extends HttpServlet {
 		//执行注销
 		//销毁用户绑定的session
 		req.getSession().invalidate();
+		//删除30自动登录的cookie
+		Cookie cookie = new Cookie("autologin","");
+		cookie.setMaxAge(0);
+		cookie.setPath(req.getContextPath()+"/");
+		resp.addCookie(cookie);
+		
 		//请求重定向到首页
 		resp.sendRedirect(req.getContextPath()+"/index.jsp");
 	}

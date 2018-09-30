@@ -15,3 +15,20 @@ use easymall;
  -- 插入数据
  insert into user values(null,'admin','123','超级管理员','123@qq.com');
  insert into user values(null,'张飞','123','管理员','123@qq.com');
+ 
+ --商品表
+ create table prod(
+	id int primary key auto_increment, 	-- 商品ID
+	name varchar(255),					-- 商品名称
+	price double,						-- 商品价格
+	cid int,							-- 商品分类
+	pnum int,							-- 商品数量
+	imgurl varchar(255),				-- 商品图片url地址
+	description varchar(255)		    -- 商品描述
+);	
+			
+--商品种类表
+create table prod_category(
+	id int primary key auto_increment,	-- 商品种类ID
+	cname varchar(255)					-- 商品种类名称
+);

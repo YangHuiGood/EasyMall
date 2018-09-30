@@ -10,6 +10,24 @@
     <param-name>encode</param-name>
     <param-value>utf-8</param-value>
   </context-param>
+  <!-- 配置过滤器 -->
+  <filter>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>cn.tedu.filter.EncodingFilter</filter-class>
+  </filter>
+   <filter>
+    <filter-name>AutoLoginFilter</filter-name>
+    <filter-class>cn.tedu.filter.AutoLoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+   <filter-name>EncodingFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+   <filter-name>AutoLoginFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
   <servlet>
     <servlet-name>RegistServlet</servlet-name>
     <servlet-class>cn.tedu.web.RegistServlet</servlet-class>
@@ -30,6 +48,16 @@
     <servlet-name>LogoutServlet</servlet-name>
     <servlet-class>cn.tedu.web.LogoutServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>TestServlet</servlet-name>
+    <servlet-class>cn.tedu.web.TestServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ManageAddProdServlet</servlet-name>
+    <servlet-class>cn.tedu.backend.web.ManageAddProdServlet</servlet-class>
+  </servlet>
+
+
 
 
 
@@ -54,6 +82,14 @@
   <servlet-mapping>
     <servlet-name>LogoutServlet</servlet-name>
     <url-pattern>/LogoutServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TestServlet</servlet-name>
+    <url-pattern>/TestServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ManageAddProdServlet</servlet-name>
+    <url-pattern>/ManageAddProdServlet</url-pattern>
   </servlet-mapping>	
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

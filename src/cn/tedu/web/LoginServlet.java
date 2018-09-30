@@ -20,6 +20,7 @@ import cn.tedu.factory.BaseFactory;
 import cn.tedu.service.UserService;
 import cn.tedu.service.UserServiceImpl;
 import cn.tedu.util.JDBCUtils;
+import cn.tedu.util.MD5Util;
 
 public class LoginServlet extends HttpServlet {
 
@@ -37,13 +38,11 @@ public class LoginServlet extends HttpServlet {
 			throws ServletException, IOException {
 		//获取web.xml中配置的字符集
 		String encode = this.getServletContext().getInitParameter("encode");
-		//1.处理乱码-请求乱码、应答乱码
-		   //post请求乱码
-		req.setCharacterEncoding(encode);
 		//2.接收请求参数
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
 		String remname = req.getParameter("remname");
+		String autologin = req.getParameter("autologin");
 		//3.表单验证(略)
 		//4.执行逻辑
 		 //记住用户名
@@ -68,7 +67,8 @@ public class LoginServlet extends HttpServlet {
 		}
 		//5.根据执行结果返回应答内容
 		//登录
-		//判断用户的用户名和密码是否正确
+		//将密码进行MD5加密
+		password = MD5Util.md5(password);
 		
 		UserService service = BaseFactory.getFactory().getInstance(UserService.class);
 		User user = null;
@@ -84,6 +84,19 @@ public class LoginServlet extends HttpServlet {
 		if(user != null){
 			//直接添加用户对象在session中，供后续使用
 			req.getSession().setAttribute("user", user);
+			//执行30天自动登录
+			if("true".equals(autologin)){
+				//用户勾选了30天自动登录
+				//创建cookie保存用户名和密码
+				Cookie cookie = new Cookie("autologin",URLEncoder.encode(username,encode)+"#"+password);
+				//设置时长
+				cookie.setMaxAge(60*60*24*30);//30天
+				//设置cookie的path
+				cookie.setPath(req.getContextPath()+"/");
+				//将cookie添加到response中
+				resp.addCookie(cookie);
+			}
+			//重定向到首页
 			resp.sendRedirect(req.getContextPath()+"/index.jsp");
 			
 		}else{
