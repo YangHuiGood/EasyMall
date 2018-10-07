@@ -46,7 +46,7 @@ public class UserDaoImpl implements UserDao {
 			ps.setString(3, user.getNickname());
 			ps.setString(4, user.getEmail());
 			int i = ps.executeUpdate();
-			if(i > -1){
+			if(i > 0){
 				return true;
 			}
 		} catch (Exception e) {

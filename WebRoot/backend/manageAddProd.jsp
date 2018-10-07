@@ -11,7 +11,7 @@
 	<body>
 		<h1>EasyMall_添加商品</h1>
 		<hr>
-			<form action="${app }/servlet/ManageAddProdServlet" method="POST" enctype="multipart/form-data">
+			<form action="${app }/ManageAddProdServlet" method="POST" enctype="multipart/form-data">
 				<table align="center" border="1" cellspacing="0px" cellpadding="5px">
 					<tr>
 						<td>商品名称</td>
