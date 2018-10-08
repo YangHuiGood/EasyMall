@@ -1,5 +1,7 @@
 package cn.tedu.service;
 
+import java.util.List;
+
 import cn.tedu.domain.Prod;
 
 public interface ProdService {
@@ -9,4 +11,10 @@ public interface ProdService {
 	 * @return true-添加成功 false-添加失败
 	 */
 	boolean addProd(Prod prod);
+
+	/**
+	 * 查询所有商品数据的方法
+	 * @return 返回商品对象的list集合
+	 */
+	List<Prod> listAllProd();
 }

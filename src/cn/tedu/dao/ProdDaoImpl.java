@@ -4,11 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.tedu.domain.Prod;
 import cn.tedu.domain.ProdCategory;
 import cn.tedu.exception.MsgException;
 import cn.tedu.util.JDBCUtils;
+import cn.tedu.util.TransactionManager;
 
 public class ProdDaoImpl implements ProdDao {
 
@@ -19,7 +22,7 @@ public class ProdDaoImpl implements ProdDao {
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
-			conn=JDBCUtils.getConnection();
+			conn=TransactionManager.getConn();
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, cname);
 			rs = ps.executeQuery();
@@ -31,7 +34,7 @@ public class ProdDaoImpl implements ProdDao {
 			e.printStackTrace();
 			throw new MsgException("查询商品种类时出现异常");
 		}finally{
-			JDBCUtils.close(conn, ps, rs);
+			JDBCUtils.close(null, ps, rs);
 		}
 		return -1;
 	}
@@ -42,7 +45,7 @@ public class ProdDaoImpl implements ProdDao {
 		Connection conn=null;
 		PreparedStatement ps=null;
 		try {
-			conn=JDBCUtils.getConnection();
+			conn=TransactionManager.getConn();
 			ps=conn.prepareStatement(sql);
 			ps.setString(1, pc.getCname());
 			int i=ps.executeUpdate();
@@ -52,7 +55,7 @@ public class ProdDaoImpl implements ProdDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			JDBCUtils.close(conn, ps, null);
+			JDBCUtils.close(null, ps, null);
 		}
 		return false;
 	}
@@ -63,7 +66,7 @@ public class ProdDaoImpl implements ProdDao {
 		Connection conn=null;
 		PreparedStatement ps=null;
 		try {
-			conn=JDBCUtils.getConnection();
+			conn=TransactionManager.getConn();
 			ps=conn.prepareStatement(sql);
 			ps.setString(1, prod.getName());
 			ps.setDouble(2, prod.getPrice());
@@ -78,9 +81,41 @@ public class ProdDaoImpl implements ProdDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			JDBCUtils.close(conn, ps, null);
+			JDBCUtils.close(null, ps, null);
 		}
 		return false;
+	}
+
+	@Override
+	public List<Prod> listAllProd() {
+		List<Prod> list = null;
+		String sql = "select p1.*, c1.cname from prod p1 join prod_category c1 on p1.cid = c1.id";
+		Connection conn = null;
+		PreparedStatement ps=null;
+		ResultSet rs=null;	
+		try {
+			conn = JDBCUtils.getConnection();
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			list = new ArrayList<Prod>();
+			while(rs.next()){
+				//创建一个Prod对象，用于保存查询到的一条记录
+				Prod prod = new Prod();
+				prod.setId(rs.getInt("id"));
+				prod.setName(rs.getString("name"));
+				prod.setCname(rs.getString("cname"));
+				prod.setPnum(rs.getInt("pnum"));
+				prod.setPrice(rs.getDouble("price"));
+				prod.setImgurl(rs.getString("imgurl"));
+				prod.setDescription(rs.getString("description"));
+				list.add(prod);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			JDBCUtils.close(conn, ps, rs);
+		}
+		return list;
 	}
 
 }

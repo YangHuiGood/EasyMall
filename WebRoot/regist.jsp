@@ -87,7 +87,7 @@
 		       var  flag = formObj.checkNull("username","用户名不能为空");
 		       //发送ajxa请求
 		       if(flag){//说明username不为空
-		          var url = "/AjaxCheckUsernameServlet?username="+$(this).val();
+		          var url = "${app}/AjaxCheckUsernameServlet?username="+$(this).val();
 		          //load方法时通过一个组件来调用
 		          //当ajax请求收到一个应答后，会将收到的应答内容自动填充到该组件内
 		          $("#msg_username").load(url);
@@ -117,7 +117,7 @@
 		       //获取当前的时间戳
 		       var timeStr = new Date().getTime();
 		       //将时间戳拼接在url后面，实现每次点击都不一样
-		       var url = "/ValiImageServlet?time="+timeStr;
+		       var url = "${app}/ValiImageServlet?time="+timeStr;
 		       //修改img的src的属性
 		       $(this).attr("src",url);
 		    });
@@ -125,46 +125,46 @@
 		</script>	
 	</head>
 	<body>
-		<form action="/RegistServlet" method="POST" onSubmit="return formObj.checkForm()">
+		<form action="${app}/RegistServlet" method="POST" onSubmit="return formObj.checkForm()">
 			<h1>欢迎注册EasyMall</h1>
 			<table>
 			    <tr>
 			        <td colspan="2" style="text-align: center;color:red">
-			           <%=request.getAttribute("errMsg") == null ? "" : request.getAttribute("errMsg") %>
+			           ${requestScope.errMsg }
 			        </td>
 			    </tr>
 				<tr>
 					<td class="tds">用户名：</td>
 					<td>
-						<input type="text" name="username" value="<%=request.getParameter("username") == null ? "" : request.getParameter("username")%>"/>
+						<input type="text" name="username" value="${param.username}"/>
 						<span id="msg_username"></span>
 					</td>
 				</tr>
 				<tr>
 					<td class="tds">密码：</td>
 					<td>
-						<input type="password" name="password" value="<%=request.getParameter("password") == null ? "" : request.getParameter("password")%>"/>
+						<input type="password" name="password" value="${param.password}"/>
 						<span></span>
 					</td>
 				</tr>
 				<tr>
 					<td class="tds">确认密码：</td>
 					<td>
-						<input type="password" name="password2" value="<%=request.getParameter("password2") == null ? "" : request.getParameter("password2")%>"/>
+						<input type="password" name="password2" value="${param.password2}"/>
 						<span></span>
 					</td>
 				</tr>
 				<tr>
 					<td class="tds">昵称：</td>
 					<td>
-						<input type="text" name="nickname" value="<%=request.getParameter("nickname") == null ? "" : request.getParameter("nickname")%>"/>
+						<input type="text" name="nickname" value="${param.nickname}"/>
 						<span></span>
 					</td>
 				</tr>
 				<tr>
 					<td class="tds">邮箱：</td>
 					<td>
-						<input type="text" name="email" value="<%=request.getParameter("email") == null ? "" : request.getParameter("email")%>"/>
+						<input type="text" name="email" value="${param.email}"/>
 						<span></span>
 					</td>
 				</tr>
@@ -172,7 +172,7 @@
 					<td class="tds">验证码：</td>
 					<td>
 						<input type="text" name="valistr"/>
-						<img id="valiImage" src="/ValiImageServlet" width="" height="" alt="" />
+						<img id="valiImage" src="${app }/ValiImageServlet" width="" height="" alt="" />
 						<span></span>
 					</td>
 				</tr>

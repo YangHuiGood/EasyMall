@@ -1,5 +1,7 @@
 package cn.tedu.dao;
 
+import java.util.List;
+
 import cn.tedu.domain.Prod;
 import cn.tedu.domain.ProdCategory;
 import cn.tedu.exception.MsgException;
@@ -27,4 +29,10 @@ public interface ProdDao {
 	 * @return true-添加成功 false-添加失败
 	 */
 	boolean insertProd(Prod prod);
+
+	/**
+	 * 查询所有商品信息的方法
+	 * @return
+	 */
+	List<Prod> listAllProd();
 }

@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" href="css/login.css"/>
+		<link rel="stylesheet" href="${app }/css/login.css"/>
 		<title>EasyMall欢迎您登录</title>
 	</head>
 	<body>
@@ -38,7 +38,7 @@
 		<form action="/LoginServlet" method="POST">
 			<table>
 			    <tr>
-			       <td style="text-align: center;color:red"><%=request.getAttribute("errMsg") == null? "":request.getAttribute("errMsg") %></td>
+			       <td style="text-align: center;color:red">${requestScope.errMsg}</td>
 			    </tr>
 				<tr>
 					<td class="tdx">用户名：</td>
@@ -51,7 +51,7 @@
 				<tr>
 					<td colspan="2">
 						<input type="checkbox"
-						<%=findC == null ? "":"checked = 'checked'" %>
+						${empty cookie.remname.value ? "" : "checked='checked'"}
 						 name="remname" value="true"/>记住用户名
 						<input type="checkbox" name="autologin" value="true"/>30天内自动登录
 					</td>

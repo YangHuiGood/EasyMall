@@ -10,6 +10,12 @@
     <param-name>encode</param-name>
     <param-value>utf-8</param-value>
   </context-param>
+  
+  <!-- 注册监听器 -->
+  <listener>
+    <listener-class>cn.tedu.listener.MyServletContextListener</listener-class>
+  </listener>
+  
   <!-- 配置过滤器 -->
   <filter>
     <filter-name>EncodingFilter</filter-name>
@@ -56,6 +62,16 @@
     <servlet-name>ManageAddProdServlet</servlet-name>
     <servlet-class>cn.tedu.backend.web.ManageAddProdServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>ProdListServlet</servlet-name>
+    <servlet-class>cn.tedu.web.ProdListServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ProdImgServlet</servlet-name>
+    <servlet-class>cn.tedu.web.ProdImgServlet</servlet-class>
+  </servlet>
+
+
 
 
 
@@ -90,6 +106,14 @@
   <servlet-mapping>
     <servlet-name>ManageAddProdServlet</servlet-name>
     <url-pattern>/ManageAddProdServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ProdListServlet</servlet-name>
+    <url-pattern>/ProdListServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ProdImgServlet</servlet-name>
+    <url-pattern>/ProdImgServlet</url-pattern>
   </servlet-mapping>	
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
