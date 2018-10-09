@@ -118,4 +118,116 @@ public class ProdDaoImpl implements ProdDao {
 		return list;
 	}
 
+	@Override
+	public boolean updatePnumById(int pid, int pnum) {
+		String sql = "update prod set pnum = ? where id = ?";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = JDBCUtils.getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnum);
+			ps.setInt(2, pid);
+			int len = ps.executeUpdate();
+			if(len > 0){
+				return true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			JDBCUtils.close(conn, ps, null);
+		}
+		return false;
+	}
+
+	@Override
+	public int getCidByPid(int pid) {
+		String sql = "select cid from prod where id=?";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			// 从事务管理器获取连接对象
+			conn = TransactionManager.getConn();
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, pid);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getInt("cid");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtils.close(null, ps, rs);
+		}
+		return 0;
+	}
+
+	@Override
+	public int getCountProdByCid(int cid) {
+		// 在sql上使用悲观锁解决方案，在查询时添加排他锁
+		String sql = "select count(*) from prod where cid=? for update";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn=TransactionManager.getConn();
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, cid);
+			rs=ps.executeQuery();
+			if(rs.next()){
+				return rs.getInt("count(*)");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			JDBCUtils.close(null, ps, rs);
+		}
+		return 0;
+	}
+
+	@Override
+	public boolean delProdById(int pid) {
+		String sql="delete from prod where id=?";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn=TransactionManager.getConn();
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, pid);
+			int i=ps.executeUpdate();
+			if(i>0){
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			JDBCUtils.close(null, ps, null);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean delProdCategoryByCid(int cid) {
+		String sql="delete from prod_category where id=?";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn=TransactionManager.getConn();
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, cid);
+			int i=ps.executeUpdate();
+			if(i>0){
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			JDBCUtils.close(null, ps, null);
+		}
+		return false;
+	}
+
 }

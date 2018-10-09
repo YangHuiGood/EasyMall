@@ -63,5 +63,44 @@ public class ProdServiceImpl implements ProdService {
 	public List<Prod> listAllProd() {
 		return dao.listAllProd();
 	}
+	@Override
+	public boolean prodUpdatePnum(int pid, int pnum) {
+		return dao.updatePnumById(pid,pnum);
+	}
+	@Override
+	public boolean prodDel(int pid) {
+		//需求：如果商品是唯一的一个商品则在删除商品的同时也要删除该商品的商品种类，反之，则不需要删除商品种类
+		boolean flag = false;
+		try {
+			//开启事务
+			TransactionManager.startTran();
+			//根据pid查询该商品的种类cid
+			int cid = dao.getCidByPid(pid); 
+			if(cid == 0){
+				//查询失败
+				return false;
+			}
+			// 根据商品种类的cid,得到该商品种类有多少种商品
+			int countProd = dao.getCountProdByCid(cid);
+			if(countProd > 1){
+				// 如果该商品种类包含多于1种商品，则仅删除该商品
+				flag = dao.delProdById(pid);
+			}else if(countProd == 1){
+				// 如果该商品种类只有1种商品了，则删除商品和商品种类
+				flag = dao.delProdById(pid);
+				flag = dao.delProdCategoryByCid(cid) && flag;
+			}
+			//提交事务
+			TransactionManager.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			//回滚事务
+			TransactionManager.rollback();
+		}finally{
+			TransactionManager.colseConn();
+		}
+		
+		return flag;
+	}
 
 }
